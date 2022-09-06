@@ -1,0 +1,397 @@
+---
+title: "IMPACT Example Script"
+format: html
+editor: source
+---
+
+
+# Pulling Data 
+
+
+```{r}
+library(cbioportalR)
+library(tidyverse)
+#devtools::install_github("MSKCC-Epi-Bio/gnomeR")
+library(gnomeR)
+library(gtsummary)
+```
+
+```{r}
+set_cbioportal_db("public")
+test_cbioportal_db()
+
+```
+
+```{r}
+all_studies <- available_studies()
+all_studies
+```
+
+
+We will use the following two studies for examples
+
+
+```{r}
+all_studies %>%
+  filter(studyId %in% c("blca_nmibc_2017", "prad_msk_2019"))
+```
+
+```{r}
+get_study_info("blca_nmibc_2017") %>%
+  t()
+```
+
+```{r}
+s1 <- available_samples("blca_nmibc_2017") %>%
+  select(sampleId, patientId, studyId) %>%
+  head(10)
+
+s2 <- available_samples("prad_msk_2019") %>%
+  select(sampleId,  patientId, studyId) %>%
+  head(10)
+
+df_pairs <- bind_rows(s1, s2) %>%
+  select(-patientId)
+
+
+df_pairs <- df_pairs %>%
+  rename("sample_id" = sampleId,
+         "study_id" = studyId)
+
+all_genomic <- get_genetics_by_sample(sample_study_pairs = df_pairs)
+
+```
+
+
+
+
+# Processing Data
+
+Some research samples included in this study. We may want to check or ask if these were sampled on different (non IMPACT panels) and also we should get distributions of alterations.
+
+
+```{r}
+s1_all <- available_samples("blca_nmibc_2017") 
+s1_all <- s1_all$sampleId
+
+s1_all[90:105]
+```
+
+
+What type of genomic data is available?
+
+
+```{r}
+available_profiles("blca_nmibc_2017")
+```
+
+
+Get all genomic data:
+
+
+```{r }
+all_genomic <- get_genetics_by_study("blca_nmibc_2017")
+```
+
+
+Note, you can also pull by Sample ID/Study ID pairs. 
+
+
+```{r}
+s1 <- available_samples("blca_nmibc_2017") %>%
+  select(sampleId, patientId, studyId) %>%
+  head(10)
+
+s2 <- available_samples("prad_msk_2019") %>%
+  select(sampleId,  patientId, studyId) %>%
+  head(10)
+
+df_pairs <- bind_rows(s1, s2) %>%
+  select(-patientId)
+
+
+df_pairs <- df_pairs %>%
+  rename("sample_id" = sampleId,
+         "study_id" = studyId)
+
+all_genomic_by_sample <- get_genetics_by_sample(sample_study_pairs = df_pairs, 
+                                                genes = "TP53")
+
+```
+
+```{r}
+mutations <- all_genomic$mutation
+cna <- all_genomic$cna
+fusions <- all_genomic$structural_variant
+
+```
+
+
+## Check Mutation Status
+
+Sometimes you may want to code 'Unknown' as 'Somatic' (recall that somatic mutations can occur in any of the cells of the body except the germ cells and therefore are not passed on. These are often tumor-specific acquired mutations). 
+
+Researchers can compare tumor mutations to a matched normal sample. Tumor-normal comparisons are crucial for identifying the somatic variants that act as driver mutations in cancer progression
+
+
+```{r}
+table(mutations$mutationStatus, useNA = "always")
+```
+
+
+## Zero Alteration Patients
+
+Check if patients have zero alterations and be sure to include these patients in your final data set.
+
+Example, these patients below have zero mutations.
+
+
+```{r}
+
+
+setdiff(s1_all, mutations$sampleId)
+
+# if you queried, no mutations would come up
+get_mutations_by_sample(sample_id = "P-0003677-T01-IM5")
+
+
+```
+
+
+## Create Gene Binary Matrix
+
+Most genomic analyses start with a binary matrix of alterations. You can use `create_gene_binary()` following function in {gnomeR} (but be sure to check results!)
+
+To use {gnomeR} functions, you need to do some data manipulation first. 
+
+!! NOTE: This may change in the upcoming months to be more user friendly.
+
+
+
+```{r}
+mutations_clean <- rename_columns(mutations)
+
+cna_clean <-cna %>%
+  mutate("hugo_symbol" = hugoGeneSymbol) %>%
+  reformat_cna()
+
+fusions_clean <- fusions %>%
+  rename("Hugo_Symbol" = site1HugoSymbol) %>%
+  rename_columns()
+```
+
+
+
+## Confirm Zero Patients Are Included in Binary Matrix
+
+
+```{r }
+binmat1 <- create_gene_binary(
+  samples = s1_all, 
+  mutation = mutations_clean
+)
+```
+
+```{r }
+binmat2 <- create_gene_binary(
+#  samples = s1_all, 
+  mutation = mutations_clean
+)
+
+dim(binmat1)
+dim(binmat2)
+
+```
+
+```{r}
+setdiff(rownames(binmat1), rownames(binmat2))
+```
+
+
+If you didn't specify samples, your denominator may be under counted!
+
+
+## Annotate NAs in IMPACT Panels
+
+Recall that there are several versions of the IMPACT panels. Not all genes are tested in all panels. We must account for this by inserting NAs for samples/genes that were not tested.
+
+
+```{r}
+str_detect(s1_all, "IM5") %>% sum()
+str_detect(s1_all, "IM3") %>% sum()
+```
+
+
+Let's check what results look like before we specify panels:
+
+
+```{r}
+binmat <- create_gene_binary(
+  samples = s1_all, 
+  mutation = mutations_clean, 
+  cna = cna_clean, 
+  fusion = fusions_clean
+)
+
+head(binmat[1:6, 1:6])
+```
+
+```{r}
+binmat <- binmat %>%
+  rownames_to_column("sample_id")
+```
+
+```{r}
+map_dbl(binmat, ~sum(is.na(.x)))
+```
+
+
+
+Use the `specify_panel` argument to take care of NA annotation for you!
+
+
+```{r}
+binmat_panel <- create_gene_binary(
+  samples = s1_all, 
+  mutation = mutations_clean, 
+  cna = cna_clean, 
+  fusion = fusions_clean, 
+  specify_panel = "impact"
+)
+
+map_dbl(binmat_panel, ~sum(is.na(.x))) %>% head()
+```
+
+```{r}
+sample_panel_pair <- binmat %>%
+  select(sample_id)
+
+sample_panel_pair <- sample_panel_pair %>%
+    mutate(panel_id = case_when(
+      stringr::str_detect(.data$sample_id, "-IM3") ~ "IMPACT341",
+      stringr::str_detect(.data$sample_id, "-IM5") ~ "IMPACT410",
+      stringr::str_detect(.data$sample_id, "-IM6") ~ "IMPACT468",
+      stringr::str_detect(.data$sample_id, "-IM7") ~ "IMPACT505",
+      TRUE ~ "IMPACT505"
+    ))
+
+binmat_panel <- create_gene_binary(
+  samples = s1_all, 
+  mutation = mutations_clean, 
+  cna = cna_clean, 
+  fusion = fusions_clean, 
+  specify_panel = sample_panel_pair
+)
+
+map_dbl(binmat_panel, ~sum(is.na(.x))) %>% head(50)
+```
+
+
+### Recode Aliases
+
+recode alias argument helps check for any genes that have been renamed.
+
+
+```{r}
+binmat_panel_recode <- create_gene_binary(
+  samples = s1_all, 
+  mutation = mutations_clean, 
+  cna = cna_clean, 
+  fusion = fusions_clean, 
+  specify_panel = sample_panel_pair, 
+  recode_aliases = TRUE
+)
+```
+
+
+Luckily this isn't a problem in our data, but let's make up an example to demonstrate.
+
+
+```{r }
+
+# recode ABL1 gene to one of it's aliases
+mutations_test <- mutations_clean %>%
+  mutate(Hugo_Symbol = 
+           case_when(Hugo_Symbol == "ABL1" ~ "ABL", 
+                     TRUE ~ Hugo_Symbol))
+
+binmat_panel_recode <- create_gene_binary(
+  samples = s1_all, 
+  mutation = mutations_test, 
+  cna = cna_clean, 
+  fusion = fusions_clean, 
+  recode_aliases = TRUE
+)
+```
+
+
+
+
+# Analyzing Data
+
+Now that we've processed the data we will summarize it. You can use `tbl_summary()` or the following experimental function which has some benefits:
+
+- automatically orders genes by frequency
+- allows you to specify a prevalence threshold cutoff
+
+
+
+```{r}
+tbl_genomic(binmat_panel, freq_cutoff = .1)
+```
+
+```{r}
+binmat_panel_var <- binmat_panel %>%
+    mutate(sex = sample(x = c("M", "F"),
+     size = nrow(binmat_panel), replace = TRUE))
+```
+
+```{r}
+tbl_genomic(binmat_panel_var,
+            freq_cutoff = .1, 
+            by = sex,
+            freq_cutoff_by_gene  = FALSE) %>%
+  add_p() %>% 
+  add_q()
+```
+
+
+# Visualizing Data
+
+
+```{r}
+ggvarclass(mutations_clean) +theme_bw()
+```
+
+```{r}
+
+gggenecor(mutations_clean)
+```
+
+```{r}
+ggcomut(mutations_clean)
+```
+
+```{r}
+ggtopgenes(mutations_clean)
+```
+
+Uses `ComplexHeatmap::Heatmap()` for descriptive heatmap
+
+
+```{r}
+ggheatmap(binmat_panel_recode[1:100, 150:400])
+```
+
+
+## Get TMB
+
+
+
+```{r}
+clin <- available_clinical_attributes("blca_nmibc_2017")
+clin$clinicalAttributeId %>% unique()
+
+get_clinical_by_study(study_id = "blca_nmibs_2017", "TMB_NONSYNONYMOUS")
+```
+

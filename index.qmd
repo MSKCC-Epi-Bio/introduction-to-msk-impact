@@ -1,0 +1,237 @@
+---
+format: 
+  revealjs: 
+    theme:  [default, style.scss]
+    transition: fade
+    slide-number: true
+execute:
+  echo: true 
+  output: asis
+editor: source
+---
+
+# Introduction to MSK IMPACT Part 2 {background-color="#007CBA" style="text-align: center;"}
+
+```{r}
+#| echo: false
+#| results: false
+
+knitr::opts_chunk$set(echo = TRUE, results = 'asis')
+
+library(tidyverse)
+library(gtsummary)
+
+knit_print.gtsummary <- function(x, ...) {
+   gtsummary::as_gt(x) |>
+     gt::as_raw_html()
+}
+
+knit_print.gt_tbl <- function(x, ...) {
+  gt::as_raw_html(x)
+} 
+
+
+registerS3method("knit_print", "gtsummary", knit_print.gtsummary)
+registerS3method("knit_print", "gt_tbl", knit_print.gt_tbl)
+
+# fill for font awesome icons
+fa_fill <- "#606060"
+```
+
+![](images/logos.png){width="1000px"}
+
+Karissa Whiting <br> Research Biostatistician <br> Memorial Sloan Kettering <br>
+
+<br>
+
+`r fontawesome::fa("twitter", fill = "white")` [[\@karissawhiting](https://twitter.com/karissawhiting)]{style="color: white"}
+
+`r fontawesome::fa("github", fill = "white")` [[github.com/karissawhiting](https://github.com/karissawhiting/)]{style="color: white"}
+
+## Agenda
+
+-   [Accessing IMPACT Data (Review)]{.emphasized}
+
+    -   {cbioportalR}
+
+-   [Processing IMPACT Data]{.emphasized}
+
+    -   {gnomeR}
+
+-   [Visualizing & Analyzing IMPACT Data]{.emphasized}
+
+    -   {gnomeR} & {ggplot}
+
+-   [Common Analysis Issues]{.emphasized}
+
+    -   Multiple testing
+    -   Tumor Mutation Burden
+    -   Survival Analysis Issues
+
+## Get the Data: cBioPortal
+
+::: columns
+::: {.column .incremental width="60%"}
+-   [**cBioPortal**]{.emphasized} is a website and database that provides access to genomic data sets
+
+-   Provides tools for [downloading, visualizing]{.emphasized}, and [analyzing]{.emphasized} data sets
+
+-   However, we often prefer to do all aspects of analysis programmatically for reproducibility!
+:::
+
+::: {.column width="40%"}
+![](images/cbp-logo.png) ![](images/cbp-screenshot.png)
+:::
+:::
+
+## Get the Data: cBioPortalR
+
+::: columns
+::: {.column .incremental width="70%"}
+[{cbioportalR}]{.emphasized} allows you to access cBioPortal's genomic and clinical data sets directly through R
+
+Install the most up to date version:
+
+```{r }
+#| eval: false
+remotes::install_github("karissawhiting/cbioportalR")
+```
+
+Documentation: https://www.karissawhiting.com/cbioportalR/
+:::
+
+::: {.column }
+![](images/cbioportalR-logo.png)
+:::
+:::
+
+## Get the Data: Authenticate Yourself
+
+-   You can access public data anytime without credentials using the [public site]{.emphasized} (https://www.cbioportal.org/):
+
+```{r }
+#| results: markup
+#| 
+library(cbioportalR)
+set_cbioportal_db('public')
+available_studies() %>% head(n = 3)
+
+```
+
+-   Many project rely on [internal data sets]{.emphasized} and will require you to [authenticate yourself]{.emphasized} (https://cbioportal.mskcc.org/)
+
+```{r }
+#| results: markup
+
+# assumes you've already gotten a login/token
+set_cbioportal_db('msk')
+available_studies() %>% head(n = 3)
+```
+
+## Get the Data: How Data is Organized in cBioPortal
+
+![](images/cbp-diagram.png)
+
+## Get the Data: How Data is Organized in cBioPortal
+
+[!! NOTE: Some studies exist in both public and MSK databases, but may differ in format or content]{.emphasized}
+
+![](images/cbp-diagram.png)
+
+## Get the Data: A Few Notes
+
+-   Sometimes you need to analyze [data not available in cBioPortal]{.emphasized} in cases of:
+
+    -   Germline tumor samples
+    -   Samples from other institutions
+    -   Data hand curated/annotated for certains variants (e.g. certain SNPs only)
+
+-   Be sure to check for [selection of genes]{.emphasized} or filters that may have been applied
+
+-   You may have to do some additional data wrangling to get this data to work in MSK pipelines
+
+# Processing Data {background-color="#007CBA" style="text-align: center;"}
+
+
+## Processing Data: Issues To Address
+
+1)  **Research Samples vs. IMPACT Samples**
+    -   Some samples may be sequenced outside MSK or using different panels. You can usually tell by the sample ID (if P-000XXX-T0X-IMX, it is likely IMPACT with IMX indicating panel)
+2)  **Cohort Inclusion**
+    -   Samples with no alterations may be dropped when pulling data
+3)  **Data Formats & Gene Standards Often Inconsistent**
+    -   Column names, data formats and gene names may differ between studies or even within studies!
+4)  **Missing Data in Mutation Status**
+    -   Mutation Status is sometimes missing data.
+
+## Processing Data: Code Example
+
+
+[Code Example on github:]{.largest}
+[
+[https://github.com/MSKCC-Epi-Bio/introduction-to-msk-impact](https://github.com/MSKCC-Epi-Bio/introduction-to-msk-impact)
+]{.larger}
+
+## Processing Data: Recap
+
+1)  **Research Samples vs. IMPACT Samples**
+    -   Some samples may be sequenced outside MSK or using different panels. You can usually tell by the sample ID (if P-000XXX-T0X-IMX, it is likely IMPACT with IMX indicating panel)
+    -   [Check panels and annotate NAs accordingly]{.emphasized}
+2)  **Cohort Inclusion**
+    -   Samples with no alterations may be dropped when pulling data
+    -   [Use `samples` arg of `create_gene_binary()` and check data]{.emphasized}
+3)  **Data Formats & Gene Standards Often Inconsistent**
+    -   Column names, data formats and gene names may differ between studies or even within studies!
+    -   [Reformat data as necessary and check gene aliases (`recode_aliases = TRUE`)]{.emphasized}
+4)  **Missing Data in Mutation Status**
+    -   Mutation Status is sometimes missing data.
+    -   [Check Mutation Status column]{.emphasized}
+
+
+# Analyzing Data {background-color="#007CBA" style="text-align: center;"}
+
+## Analyzing Data: Issues To Address
+
+1) **OncoKB Annotation**
+    - Some studies may require oncoKB annotation of data
+    
+2) **Multiple Testing and False Positives**
+    - Very low prevalence genes are often not very informative in standard IMPACT analyses. Choose a threshold (e.g. 1% or 5 %) _a prior_ to limit number of tests. 
+    - Report q-value (adjusted for multiple testing)
+    
+3) **Analyzing Tumor Mutation Burden Across Samples**
+    - Although TMB is always measured as number of mutations per coding area, depth of sequencing can make this measure inconsistent between studies. 
+    - Usually ok within IMPACT studies but not always comparable with WES studies
+
+4) ****
+
+## Analyzing Data: Multiple Testing
+
+- Because each hypothesis test has a probability of producing a type I error (falsely rejecting a null hypothesis that is true), performing a large number of hypothesis tests virtually guarantees the presence of type I errors among the findings.
+
+- Firstly, depending on size of data and type of analysis, choose a prevalence threshold for genes to test
+
+- Report tests with adjustment- Recommended to use false discovery rate adjustment as opposed to FWER (eg. bonferroni) as it controls for a low proportion of false positives, instead of guarding against making any false positive conclusion at all
+
+- Reference: Goeman JJ, Solari A. Multiple hypothesis testing in genomics. Stat Med. 2014 May 20;33(11):1946-78. doi: 10.1002/sim.6082. Epub 2014 Jan 8. PMID: 24399688.
+
+
+
+## Analyzing Data: Tumor Mutational Burden
+
+- Tumor mutation burden (TMB): total number of mutations per coding area of a tumor genome. 
+- Coding area (denominator) different for different versions of MSK-IMPACT
+
+![](images/tmb.png)
+- Get this data from cBioPortal when you can (they have published methods on this).
+
+```{r}
+#| eval: false
+#| 
+available_clinical_attributes(<your-study>)
+get_clinical_by_study(clinical_attribute = <tmb-attribute-name>)
+```
+
+- If it's not available, you can calculate it yourself
+
+

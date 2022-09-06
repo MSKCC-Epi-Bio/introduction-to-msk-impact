@@ -95,10 +95,34 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </head>
 
-<body class="fullcontent">
+<body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#pulling-data" id="toc-pulling-data" class="nav-link active" data-scroll-target="#pulling-data">Pulling Data</a></li>
+  <li><a href="#processing-data" id="toc-processing-data" class="nav-link" data-scroll-target="#processing-data">Processing Data</a>
+  <ul class="collapse">
+  <li><a href="#check-mutation-status" id="toc-check-mutation-status" class="nav-link" data-scroll-target="#check-mutation-status">Check Mutation Status</a></li>
+  <li><a href="#zero-alteration-patients" id="toc-zero-alteration-patients" class="nav-link" data-scroll-target="#zero-alteration-patients">Zero Alteration Patients</a></li>
+  <li><a href="#create-gene-binary-matrix" id="toc-create-gene-binary-matrix" class="nav-link" data-scroll-target="#create-gene-binary-matrix">Create Gene Binary Matrix</a></li>
+  <li><a href="#confirm-zero-patients-are-included-in-binary-matrix" id="toc-confirm-zero-patients-are-included-in-binary-matrix" class="nav-link" data-scroll-target="#confirm-zero-patients-are-included-in-binary-matrix">Confirm Zero Patients Are Included in Binary Matrix</a></li>
+  <li><a href="#annotate-nas-in-impact-panels" id="toc-annotate-nas-in-impact-panels" class="nav-link" data-scroll-target="#annotate-nas-in-impact-panels">Annotate NAs in IMPACT Panels</a>
+  <ul class="collapse">
+  <li><a href="#recode-aliases" id="toc-recode-aliases" class="nav-link" data-scroll-target="#recode-aliases">Recode Aliases</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#analyzing-data" id="toc-analyzing-data" class="nav-link" data-scroll-target="#analyzing-data">Analyzing Data</a></li>
+  <li><a href="#visualizing-data" id="toc-visualizing-data" class="nav-link" data-scroll-target="#visualizing-data">Visualizing Data</a>
+  <ul class="collapse">
+  <li><a href="#get-tmb" id="toc-get-tmb" class="nav-link" data-scroll-target="#get-tmb">Get TMB</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -145,45 +169,43 @@ The following object is masked from 'package:cbioportalR':
 
     impact_gene_info</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtsummary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set_cbioportal_db</span>(<span class="st">"public"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set_cbioportal_db</span>(<span class="st">"public"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>✔ You are successfully connected!</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>✔ base_url for this R session is now set to "www.cbioportal.org/api" </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">test_cbioportal_db</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">test_cbioportal_db</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>✔ You are successfully connected!</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>all_studies <span class="ot">&lt;-</span> <span class="fu">available_studies</span>()</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>all_studies</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>all_studies <span class="ot">&lt;-</span> <span class="fu">available_studies</span>()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>all_studies <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 354 × 13
-   studyId   name  descr…¹ publi…² groups status impor…³ allSa…⁴ readP…⁵ cance…⁶
-   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;   &lt;lgl&gt;   &lt;chr&gt;   &lt;int&gt; &lt;chr&gt;     &lt;int&gt; &lt;lgl&gt;   &lt;chr&gt;  
- 1 acc_tcga  Adre… "TCGA … TRUE    "PUBL…      0 2022-0…      92 TRUE    acc    
- 2 bcc_unig… Basa… "Whole… TRUE    "PUBL…      0 2022-0…     293 TRUE    bcc    
- 3 ampca_bc… Ampu… "Exome… TRUE    "PUBL…      0 2022-0…     160 TRUE    ampca  
- 4 blca_dfa… Blad… "Whole… TRUE    "PUBL…      0 2022-0…      50 TRUE    blca   
- 5 blca_msk… Blad… "Compr… TRUE    "PUBL…      0 2022-0…      97 TRUE    blca   
- 6 blca_bgi  Blad… "Whole… TRUE    "PUBL…      0 2022-0…      99 TRUE    blca   
- 7 blca_msk… Blad… "Genom… TRUE    "PUBL…      0 2022-0…     109 TRUE    blca   
- 8 all_stju… Hypo… "Whole… TRUE    ""          0 2022-0…      44 TRUE    myeloid
- 9 acyc_fmi… Aden… "Targe… TRUE    "ACYC…      0 2022-0…      28 TRUE    acyc   
-10 acyc_san… Aden… "Whole… TRUE    "ACYC…      0 2022-0…      24 TRUE    acyc   
-# … with 344 more rows, 3 more variables: referenceGenome &lt;chr&gt;, pmid &lt;chr&gt;,
-#   citation &lt;chr&gt;, and abbreviated variable names ¹​description, ²​publicStudy,
-#   ³​importDate, ⁴​allSampleCount, ⁵​readPermission, ⁶​cancerTypeId</code></pre>
+<pre><code># A tibble: 6 × 13
+  studyId    name  descr…¹ publi…² groups status impor…³ allSa…⁴ readP…⁵ cance…⁶
+  &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;   &lt;lgl&gt;   &lt;chr&gt;   &lt;int&gt; &lt;chr&gt;     &lt;int&gt; &lt;lgl&gt;   &lt;chr&gt;  
+1 acc_tcga   Adre… "TCGA … TRUE    PUBLIC      0 2022-0…      92 TRUE    acc    
+2 bcc_unige… Basa… "Whole… TRUE    PUBLIC      0 2022-0…     293 TRUE    bcc    
+3 ampca_bcm… Ampu… "Exome… TRUE    PUBLIC      0 2022-0…     160 TRUE    ampca  
+4 blca_dfar… Blad… "Whole… TRUE    PUBLIC      0 2022-0…      50 TRUE    blca   
+5 blca_mskc… Blad… "Compr… TRUE    PUBLIC      0 2022-0…      97 TRUE    blca   
+6 blca_bgi   Blad… "Whole… TRUE    PUBLIC      0 2022-0…      99 TRUE    blca   
+# … with 3 more variables: referenceGenome &lt;chr&gt;, pmid &lt;chr&gt;, citation &lt;chr&gt;,
+#   and abbreviated variable names ¹​description, ²​publicStudy, ³​importDate,
+#   ⁴​allSampleCount, ⁵​readPermission, ⁶​cancerTypeId</code></pre>
 </div>
 </div>
+<p>We will use the following two studies for examples</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>all_studies <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(studyId <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"blca_nmibc_2017"</span>, <span class="st">"prad_msk_2019"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>all_studies <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(studyId <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"blca_nmibc_2017"</span>, <span class="st">"prad_msk_2019"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 13
   studyId    name  descr…¹ publi…² groups status impor…³ allSa…⁴ readP…⁵ cance…⁶
@@ -196,8 +218,8 @@ The following object is masked from 'package:cbioportalR':
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_study_info</span>(<span class="st">"blca_nmibc_2017"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_study_info</span>(<span class="st">"blca_nmibc_2017"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                            [,1]                                                                           
 name                        "Nonmuscle Invasive Bladder Cancer (MSK Eur Urol 2017)"                        
@@ -231,24 +253,63 @@ referenceGenome             "hg19"                                              
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>s1 <span class="ot">&lt;-</span> <span class="fu">available_samples</span>(<span class="st">"blca_nmibc_2017"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sampleId, patientId, studyId) <span class="sc">%&gt;%</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>s2 <span class="ot">&lt;-</span> <span class="fu">available_samples</span>(<span class="st">"prad_msk_2019"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sampleId,  patientId, studyId) <span class="sc">%&gt;%</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>df_pairs <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(s1, s2) <span class="sc">%&gt;%</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>patientId)</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>df_pairs <span class="ot">&lt;-</span> df_pairs <span class="sc">%&gt;%</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">"sample_id"</span> <span class="ot">=</span> sampleId,</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>         <span class="st">"study_id"</span> <span class="ot">=</span> studyId)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>s1 <span class="ot">&lt;-</span> <span class="fu">available_samples</span>(<span class="st">"blca_nmibc_2017"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sampleId, patientId, studyId) <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>s2 <span class="ot">&lt;-</span> <span class="fu">available_samples</span>(<span class="st">"prad_msk_2019"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sampleId,  patientId, studyId) <span class="sc">%&gt;%</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>df_pairs <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(s1, s2) <span class="sc">%&gt;%</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>patientId)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>df_pairs <span class="ot">&lt;-</span> df_pairs <span class="sc">%&gt;%</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">"sample_id"</span> <span class="ot">=</span> sampleId,</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>         <span class="st">"study_id"</span> <span class="ot">=</span> studyId)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>all_genomic <span class="ot">&lt;-</span> <span class="fu">get_genetics_by_sample</span>(<span class="at">sample_study_pairs =</span> df_pairs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining, by = "study_id"
+The following parameters were used in query:
+Study ID: "blca_nmibc_2017" and "prad_msk_2019"
+Molecular Profile ID: blca_nmibc_2017_mutations and prad_msk_2019_mutations
+Genes: "All available genes"
+Joining, by = "study_id"
+The following parameters were used in query:
+Study ID: "blca_nmibc_2017" and "prad_msk_2019"
+Molecular Profile ID: blca_nmibc_2017_cna and prad_msk_2019_cna
+Genes: "All available genes"
+Joining, by = "study_id"
+The following parameters were used in query:
+Study ID: "blca_nmibc_2017" and "prad_msk_2019"
+Molecular Profile ID: blca_nmibc_2017_structural_variants and
+prad_msk_2019_structural_variants
+Genes: "All available genes"</code></pre>
 </div>
+</div>
+</section>
+<section id="processing-data" class="level1">
+<h1>Processing Data</h1>
+<p>Some research samples included in this study. We may want to check or ask if these were sampled on different (non IMPACT panels) and also we should get distributions of alterations.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">available_profiles</span>(<span class="st">"blca_nmibc_2017"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>s1_all <span class="ot">&lt;-</span> <span class="fu">available_samples</span>(<span class="st">"blca_nmibc_2017"</span>) </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>s1_all <span class="ot">&lt;-</span> s1_all<span class="sc">$</span>sampleId</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>s1_all[<span class="dv">90</span><span class="sc">:</span><span class="dv">105</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "P-0008234-T01-IM5" "P-0008240-T01-IM5" "P-0008734-T01-IM5"
+ [4] "P-0008834-T01-IM5" "P-0008867-T01-IM5" "P-0008880-T01-IM5"
+ [7] "P-0009371-T01-IM5" "P-0010271-T01-IM5" "P-0010316-T01-IM5"
+[10] "P-0010531-T01-IM5" "s_DS_nmibc_007_P"  "s_DS_nmibc_008_P" 
+[13] "s_DS_nmibc_010_P"  "s_DS_nmibc_011_P"  "s_DS_nmibc_014_P" 
+[16] "s_DS_nmibc_019_P" </code></pre>
+</div>
+</div>
+<p>What type of genomic data is available?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">available_profiles</span>(<span class="st">"blca_nmibc_2017"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 8
   molecularAlterationType datatype name  descr…¹ showP…² patie…³ molec…⁴ studyId
@@ -259,7 +320,10 @@ referenceGenome             "hg19"                                              
 # … with abbreviated variable names ¹​description, ²​showProfileInAnalysisTab,
 #   ³​patientLevel, ⁴​molecularProfileId</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>all_genomic <span class="ot">&lt;-</span> <span class="fu">get_genetics_by_study</span>(<span class="st">"blca_nmibc_2017"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Get all genomic data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>all_genomic <span class="ot">&lt;-</span> <span class="fu">get_genetics_by_study</span>(<span class="st">"blca_nmibc_2017"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>ℹ Returning all data for the "blca_nmibc_2017_mutations" molecular profile in the "blca_nmibc_2017" study</code></pre>
 </div>
@@ -270,34 +334,97 @@ referenceGenome             "hg19"                                              
 <pre><code>ℹ Returning all data for the "blca_nmibc_2017_structural_variants" molecular profile in the "blca_nmibc_2017" study</code></pre>
 </div>
 </div>
-</section>
-<section id="processing-data" class="level1">
-<h1>Processing Data</h1>
-<p>Some research samples included in this study</p>
+<p>Note, you can also pull by Sample ID/Study ID pairs.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>s1_all <span class="ot">&lt;-</span> <span class="fu">available_samples</span>(<span class="st">"blca_nmibc_2017"</span>) </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>s1_all <span class="ot">&lt;-</span> s1_all<span class="sc">$</span>sampleId</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>s1_all[<span class="dv">90</span><span class="sc">:</span><span class="dv">105</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>s1 <span class="ot">&lt;-</span> <span class="fu">available_samples</span>(<span class="st">"blca_nmibc_2017"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sampleId, patientId, studyId) <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>s2 <span class="ot">&lt;-</span> <span class="fu">available_samples</span>(<span class="st">"prad_msk_2019"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sampleId,  patientId, studyId) <span class="sc">%&gt;%</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>df_pairs <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(s1, s2) <span class="sc">%&gt;%</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>patientId)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>df_pairs <span class="ot">&lt;-</span> df_pairs <span class="sc">%&gt;%</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">"sample_id"</span> <span class="ot">=</span> sampleId,</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>         <span class="st">"study_id"</span> <span class="ot">=</span> studyId)</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>all_genomic_by_sample <span class="ot">&lt;-</span> <span class="fu">get_genetics_by_sample</span>(<span class="at">sample_study_pairs =</span> df_pairs, </span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>                                                <span class="at">genes =</span> <span class="st">"TP53"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining, by = "study_id"
+The following parameters were used in query:
+Study ID: "blca_nmibc_2017" and "prad_msk_2019"
+Molecular Profile ID: blca_nmibc_2017_mutations and prad_msk_2019_mutations
+Genes: "TP53"
+Joining, by = "study_id"
+The following parameters were used in query:
+Study ID: "blca_nmibc_2017" and "prad_msk_2019"
+Molecular Profile ID: blca_nmibc_2017_cna and prad_msk_2019_cna
+Genes: "TP53"
+Joining, by = "study_id"
+The following parameters were used in query:
+Study ID: "blca_nmibc_2017" and "prad_msk_2019"
+Molecular Profile ID: blca_nmibc_2017_structural_variants and
+prad_msk_2019_structural_variants
+Genes: "TP53"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>mutations <span class="ot">&lt;-</span> all_genomic<span class="sc">$</span>mutation</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>cna <span class="ot">&lt;-</span> all_genomic<span class="sc">$</span>cna</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>fusions <span class="ot">&lt;-</span> all_genomic<span class="sc">$</span>structural_variant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Explore maf format (one row per mutation)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>mutations <span class="sc">%&gt;%</span> <span class="fu">str</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] "P-0008234-T01-IM5" "P-0008240-T01-IM5" "P-0008734-T01-IM5"
- [4] "P-0008834-T01-IM5" "P-0008867-T01-IM5" "P-0008880-T01-IM5"
- [7] "P-0009371-T01-IM5" "P-0010271-T01-IM5" "P-0010316-T01-IM5"
-[10] "P-0010531-T01-IM5" "s_DS_nmibc_007_P"  "s_DS_nmibc_008_P" 
-[13] "s_DS_nmibc_010_P"  "s_DS_nmibc_011_P"  "s_DS_nmibc_014_P" 
-[16] "s_DS_nmibc_019_P" </code></pre>
+<pre><code>tibble [1,595 × 33] (S3: tbl_df/tbl/data.frame)
+ $ hugoGeneSymbol       : chr [1:1595] "ABL1" "ABL1" "ABL1" "ABL1" ...
+ $ entrezGeneId         : int [1:1595] 25 25 25 25 25 25 25 142 142 207 ...
+ $ uniqueSampleKey      : chr [1:1595] "UC0wMDA1NjkwLVQwMS1JTTU6YmxjYV9ubWliY18yMDE3" "UC0wMDAzNDMzLVQwMS1JTTU6YmxjYV9ubWliY18yMDE3" "UC0wMDAzNDMzLVQwMS1JTTU6YmxjYV9ubWliY18yMDE3" "UC0wMDAzMjYxLVQwMS1JTTU6YmxjYV9ubWliY18yMDE3" ...
+ $ uniquePatientKey     : chr [1:1595] "UC0wMDA1NjkwOmJsY2Ffbm1pYmNfMjAxNw" "UC0wMDAzNDMzOmJsY2Ffbm1pYmNfMjAxNw" "UC0wMDAzNDMzOmJsY2Ffbm1pYmNfMjAxNw" "UC0wMDAzMjYxOmJsY2Ffbm1pYmNfMjAxNw" ...
+ $ molecularProfileId   : chr [1:1595] "blca_nmibc_2017_mutations" "blca_nmibc_2017_mutations" "blca_nmibc_2017_mutations" "blca_nmibc_2017_mutations" ...
+ $ sampleId             : chr [1:1595] "P-0005690-T01-IM5" "P-0003433-T01-IM5" "P-0003433-T01-IM5" "P-0003261-T01-IM5" ...
+ $ patientId            : chr [1:1595] "P-0005690" "P-0003433" "P-0003433" "P-0003261" ...
+ $ studyId              : chr [1:1595] "blca_nmibc_2017" "blca_nmibc_2017" "blca_nmibc_2017" "blca_nmibc_2017" ...
+ $ center               : chr [1:1595] "MSKCC" "MSKCC" "MSKCC" "MSKCC" ...
+ $ mutationStatus       : chr [1:1595] "SOMATIC" "SOMATIC" "SOMATIC" "SOMATIC" ...
+ $ validationStatus     : chr [1:1595] "Unknown" "Unknown" "Unknown" "Unknown" ...
+ $ tumorAltCount        : int [1:1595] 46 226 226 89 28 82 98 266 26 118 ...
+ $ tumorRefCount        : int [1:1595] 529 487 447 677 159 615 742 428 348 74 ...
+ $ normalAltCount       : int [1:1595] 0 0 0 1 0 0 0 0 0 0 ...
+ $ normalRefCount       : int [1:1595] 413 379 356 464 198 385 892 346 284 359 ...
+ $ startPosition        : int [1:1595] 133738181 133760387 133760412 133760819 133759700 133738211 133759501 226566970 226567800 105246551 ...
+ $ endPosition          : int [1:1595] 133738181 133760400 133760418 133760819 133759700 133738211 133759502 226566970 226567800 105246551 ...
+ $ referenceAllele      : chr [1:1595] "C" "GCAGCCTCTGCAGG" "GAAAGCC" "G" ...
+ $ proteinChange        : chr [1:1595] "T194I" "A904Efs*31" "G912_P914delinsAF" "E1048K" ...
+ $ mutationType         : chr [1:1595] "Missense_Mutation" "Frame_Shift_Del" "In_Frame_Del" "Missense_Mutation" ...
+ $ functionalImpactScore: chr [1:1595] "" "" "" "" ...
+ $ fisValue             : num [1:1595] 1.4e-45 1.4e-45 1.4e-45 1.4e-45 1.4e-45 ...
+ $ linkXvar             : chr [1:1595] "" "" "" "" ...
+ $ linkPdb              : chr [1:1595] "" "" "" "" ...
+ $ linkMsa              : chr [1:1595] "" "" "" "" ...
+ $ ncbiBuild            : chr [1:1595] "GRCh37" "GRCh37" "GRCh37" "GRCh37" ...
+ $ variantType          : chr [1:1595] "SNP" "DEL" "DEL" "SNP" ...
+ $ keyword              : chr [1:1595] "ABL1 T194 missense" "ABL1 truncating" NA "ABL1 E1048 missense" ...
+ $ chr                  : chr [1:1595] "9" "9" "9" "9" ...
+ $ variantAllele        : chr [1:1595] "T" "-" "CTTT" "A" ...
+ $ refseqMrnaId         : chr [1:1595] "NM_005157.4" "NM_005157.4" "NM_005157.4" "NM_005157.4" ...
+ $ proteinPosStart      : int [1:1595] 194 904 912 1048 675 204 608 540 456 17 ...
+ $ proteinPosEnd        : int [1:1595] 194 904 914 1048 675 204 610 540 456 17 ...</code></pre>
 </div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mutations <span class="ot">&lt;-</span> all_genomic<span class="sc">$</span>mutation</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>cna <span class="ot">&lt;-</span> all_genomic<span class="sc">$</span>cna</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>fusions <span class="ot">&lt;-</span> all_genomic<span class="sc">$</span>structural_variant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="check-mutation-status" class="level2">
 <h2 class="anchored" data-anchor-id="check-mutation-status">Check Mutation Status</h2>
-<p>Sometimes you may want to code ‘Unknown’ as ‘Somatic’.</p>
+<p>Sometimes you may want to code ‘Unknown’ as ‘Somatic’ (recall that somatic mutations can occur in any of the cells of the body except the germ cells and therefore are not passed on. These are often tumor-specific acquired mutations).</p>
+<p>Researchers can compare tumor mutations to a matched normal sample. Tumor-normal comparisons are crucial for identifying the somatic variants that act as driver mutations in cancer progression</p>
+<p>Filter out germline (unless working on germline study)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(mutations<span class="sc">$</span>mutationStatus, <span class="at">useNA =</span> <span class="st">"always"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(mutations<span class="sc">$</span>mutationStatus, <span class="at">useNA =</span> <span class="st">"always"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
         SOMATIC SOMATIC_VS_POOL         UNKNOWN            &lt;NA&gt; 
@@ -307,28 +434,39 @@ referenceGenome             "hg19"                                              
 </section>
 <section id="zero-alteration-patients" class="level2">
 <h2 class="anchored" data-anchor-id="zero-alteration-patients">Zero Alteration Patients</h2>
-<p>These patients have zero mutations. Be careful to include in your analysis data set.</p>
+<p>Check if patients have zero alterations and be sure to include these patients in your final data set.</p>
+<p>Example, these patients below have zero mutations.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(s1_all, mutations<span class="sc">$</span>sampleId)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(s1_all, mutations<span class="sc">$</span>sampleId)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "P-0003677-T01-IM5" "P-0005590-T01-IM5"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if you queried, no mutations would come up</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_mutations_by_sample</span>(<span class="at">sample_id =</span> <span class="st">"P-0003677-T01-IM5"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following parameters were used in query:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Study ID: "msk_impact_2017"</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Molecular Profile ID: "msk_impact_2017_mutations"</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Genes: "All available genes"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NULL</code></pre>
 </div>
 </div>
 </section>
 <section id="create-gene-binary-matrix" class="level2">
 <h2 class="anchored" data-anchor-id="create-gene-binary-matrix">Create Gene Binary Matrix</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">create_gene_binary</span>(</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations, </span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cna =</span> cna, </span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fusion =</span> fusions</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>The above will give you an error! you need to do some data manipulation first:</p>
+<p>Most genomic analyses start with a binary matrix of alterations. You can use <code>create_gene_binary()</code> following function in {gnomeR} (but be sure to check results!)</p>
+<p>To use {gnomeR} functions, you need to do some data manipulation first.</p>
 <p>!! NOTE: This may change in the upcoming months to be more user friendly.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>mutations_clean <span class="ot">&lt;-</span> <span class="fu">rename_columns</span>(mutations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>mutations_clean <span class="ot">&lt;-</span> <span class="fu">rename_columns</span>(mutations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: `x` must be a one- or two-column data frame in `deframe()`.</code></pre>
 </div>
@@ -349,14 +487,13 @@ referenceGenome             "hg19"                                              
 ! proteinChange renamed HGVSp_Short
 ! variantAllele renamed Allele</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>cna_clean <span class="ot">&lt;-</span>cna <span class="sc">%&gt;%</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">"hugo_symbol"</span> <span class="ot">=</span> hugoGeneSymbol)</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>cna_clean <span class="ot">&lt;-</span> <span class="fu">reformat_cna</span>(cna_clean)</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>fusions_clean <span class="ot">&lt;-</span> fusions <span class="sc">%&gt;%</span></span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">"Hugo_Symbol"</span> <span class="ot">=</span> site1HugoSymbol) <span class="sc">%&gt;%</span></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_columns</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>cna_clean <span class="ot">&lt;-</span>cna <span class="sc">%&gt;%</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">"hugo_symbol"</span> <span class="ot">=</span> hugoGeneSymbol) <span class="sc">%&gt;%</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reformat_cna</span>()</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>fusions_clean <span class="ot">&lt;-</span> fusions <span class="sc">%&gt;%</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">"Hugo_Symbol"</span> <span class="ot">=</span> site1HugoSymbol) <span class="sc">%&gt;%</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_columns</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: `x` must be a one- or two-column data frame in `deframe()`.</code></pre>
 </div>
@@ -366,55 +503,84 @@ referenceGenome             "hg19"                                              
 </div>
 </div>
 </section>
-<section id="check-zero-patients" class="level2">
-<h2 class="anchored" data-anchor-id="check-zero-patients">Check Zero Patients</h2>
+<section id="confirm-zero-patients-are-included-in-binary-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="confirm-zero-patients-are-included-in-binary-matrix">Confirm Zero Patients Are Included in Binary Matrix</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>binmat1 <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>binmat1 <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(mutations_clean<span class="sc">$</span>Tumor_Sample_Barcode) <span class="sc">%&gt;%</span> <span class="fu">length</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 103</code></pre>
 </div>
+</div>
+<p>Samples arg should be specified!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>binmat2 <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co">#  samples = s1_all, </span></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>binmat2 <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co">#  samples = s1_all, </span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>ℹ `samples` argument is `NULL`. We will infer your cohort inclusion and resulting data frame will include all samples with at least one alteration in mutation, fusion or cna data frames</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(binmat1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 105 320</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(binmat2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 103 320</code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(<span class="fu">rownames</span>(binmat1), <span class="fu">rownames</span>(binmat2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(<span class="fu">rownames</span>(binmat1), <span class="fu">rownames</span>(binmat2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "P-0003677-T01-IM5" "P-0005590-T01-IM5"</code></pre>
 </div>
 </div>
-<p>If you didn’t specify samples, your denominator may be undercounted!</p>
+<p>If you didn’t specify samples, your denominator may be under counted!</p>
+</section>
+<section id="annotate-nas-in-impact-panels" class="level2">
+<h2 class="anchored" data-anchor-id="annotate-nas-in-impact-panels">Annotate NAs in IMPACT Panels</h2>
+<p>Recall that there are several versions of the IMPACT panels. Not all genes are tested in all panels. We must account for this by inserting NAs for samples/genes that were not tested.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>binmat <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean, </span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cna =</span> cna_clean, </span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fusion =</span> fusions_clean</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(binmat[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_detect</span>(s1_all, <span class="st">"IM5"</span>) <span class="sc">%&gt;%</span> <span class="fu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                  ABL1 PARP1 AKT1 ALK APC BIRC3 AR RHOA ZFHX3 ATM
-P-0001453-T01-IM3    1     0    0   0   1     0  0    0     0   0
-P-0002166-T01-IM3    0     0    0   0   0     0  0    0     0   0
-P-0003238-T01-IM5    0     0    0   0   0     0  0    0     0   0
-P-0003257-T01-IM5    0     0    0   0   1     0  0    0     0   0
-P-0003261-T01-IM5    1     0    0   0   1     0  0    0     0   1
-P-0003352-T01-IM5    0     0    0   0   0     0  0    0     0   0</code></pre>
+<pre><code>[1] 97</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_detect</span>(s1_all, <span class="st">"IM3"</span>) <span class="sc">%&gt;%</span> <span class="fu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+</div>
+<p>Let’s check what results look like before we specify panels:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>binmat <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean, </span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cna =</span> cna_clean, </span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fusion =</span> fusions_clean</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(binmat[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  ABL1 PARP1 AKT1 ALK APC BIRC3
+P-0001453-T01-IM3    1     0    0   0   1     0
+P-0002166-T01-IM3    0     0    0   0   0     0
+P-0003238-T01-IM5    0     0    0   0   0     0
+P-0003257-T01-IM5    0     0    0   0   1     0
+P-0003261-T01-IM5    1     0    0   0   1     0
+P-0003352-T01-IM5    0     0    0   0   0     0</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>binmat <span class="ot">&lt;-</span> binmat <span class="sc">%&gt;%</span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"sample_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>binmat <span class="ot">&lt;-</span> binmat <span class="sc">%&gt;%</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"sample_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(binmat, <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(binmat, <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> sample_id       ABL1      PARP1       AKT1        ALK        APC      BIRC3 
          0          0          0          0          0          0          0 
@@ -538,49 +704,46 @@ MAP2K1.fus CDKN2A.fus   MDM2.Amp    RB1.Del   ATRX.Amp  PTPRD.Del CDKN2A.Del
          0          0          0 </code></pre>
 </div>
 </div>
-</section>
-<section id="annotate-impact-panels" class="level2">
-<h2 class="anchored" data-anchor-id="annotate-impact-panels">Annotate IMPACT Panels</h2>
+<p>Use the <code>specify_panel</code> argument to take care of NA annotation for you!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>binmat_panel <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean, </span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cna =</span> cna_clean, </span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fusion =</span> fusions_clean, </span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">specify_panel =</span> <span class="st">"impact"</span></span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>binmat_panel <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean, </span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cna =</span> cna_clean, </span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fusion =</span> fusions_clean, </span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">specify_panel =</span> <span class="st">"impact"</span></span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>→ Couldn't infer IMPACT panel version from these sample_ids, therefore no NA panel annotation will be done for these: s_DS_nmibc_007_P, s_DS_nmibc_008_P, s_DS_nmibc_010_P, s_DS_nmibc_011_P, s_DS_nmibc_014_P, and s_DS_nmibc_019_P</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(binmat_panel, <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.x))) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(binmat_panel, <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.x))) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> ABL1 PARP1  AKT1   ALK   APC BIRC3 
     6     6     6     6     6     8 </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>sample_panel_pair <span class="ot">&lt;-</span> binmat <span class="sc">%&gt;%</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co">#  rownames_to_column("sample_id") %&gt;%</span></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sample_id)</span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>sample_panel_pair <span class="ot">&lt;-</span> sample_panel_pair <span class="sc">%&gt;%</span></span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">panel_id =</span> <span class="fu">case_when</span>(</span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>      stringr<span class="sc">::</span><span class="fu">str_detect</span>(.data<span class="sc">$</span>sample_id, <span class="st">"-IM3"</span>) <span class="sc">~</span> <span class="st">"IMPACT341"</span>,</span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>      stringr<span class="sc">::</span><span class="fu">str_detect</span>(.data<span class="sc">$</span>sample_id, <span class="st">"-IM5"</span>) <span class="sc">~</span> <span class="st">"IMPACT410"</span>,</span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>      stringr<span class="sc">::</span><span class="fu">str_detect</span>(.data<span class="sc">$</span>sample_id, <span class="st">"-IM6"</span>) <span class="sc">~</span> <span class="st">"IMPACT468"</span>,</span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>      stringr<span class="sc">::</span><span class="fu">str_detect</span>(.data<span class="sc">$</span>sample_id, <span class="st">"-IM7"</span>) <span class="sc">~</span> <span class="st">"IMPACT505"</span>,</span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"IMPACT505"</span></span>
-<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>    ))</span>
-<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>binmat_panel <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
-<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
-<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean, </span>
-<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">cna =</span> cna_clean, </span>
-<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">fusion =</span> fusions_clean, </span>
-<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">specify_panel =</span> sample_panel_pair</span>
-<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(binmat_panel, <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.x))) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>sample_panel_pair <span class="ot">&lt;-</span> binmat <span class="sc">%&gt;%</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sample_id)</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>sample_panel_pair <span class="ot">&lt;-</span> sample_panel_pair <span class="sc">%&gt;%</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">panel_id =</span> <span class="fu">case_when</span>(</span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>      stringr<span class="sc">::</span><span class="fu">str_detect</span>(.data<span class="sc">$</span>sample_id, <span class="st">"-IM3"</span>) <span class="sc">~</span> <span class="st">"IMPACT341"</span>,</span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>      stringr<span class="sc">::</span><span class="fu">str_detect</span>(.data<span class="sc">$</span>sample_id, <span class="st">"-IM5"</span>) <span class="sc">~</span> <span class="st">"IMPACT410"</span>,</span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>      stringr<span class="sc">::</span><span class="fu">str_detect</span>(.data<span class="sc">$</span>sample_id, <span class="st">"-IM6"</span>) <span class="sc">~</span> <span class="st">"IMPACT468"</span>,</span>
+<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a>      stringr<span class="sc">::</span><span class="fu">str_detect</span>(.data<span class="sc">$</span>sample_id, <span class="st">"-IM7"</span>) <span class="sc">~</span> <span class="st">"IMPACT505"</span>,</span>
+<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"IMPACT505"</span></span>
+<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-13"><a href="#cb71-13" aria-hidden="true" tabindex="-1"></a>binmat_panel <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
+<span id="cb71-14"><a href="#cb71-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
+<span id="cb71-15"><a href="#cb71-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean, </span>
+<span id="cb71-16"><a href="#cb71-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">cna =</span> cna_clean, </span>
+<span id="cb71-17"><a href="#cb71-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">fusion =</span> fusions_clean, </span>
+<span id="cb71-18"><a href="#cb71-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">specify_panel =</span> sample_panel_pair</span>
+<span id="cb71-19"><a href="#cb71-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb71-20"><a href="#cb71-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-21"><a href="#cb71-21" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(binmat_panel, <span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.x))) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  ABL1  PARP1   AKT1    ALK    APC  BIRC3     AR   RHOA  ZFHX3    ATM    ATR 
      0      0      0      0      0      2      0      0      2      0      0 
@@ -596,42 +759,18 @@ MAP2K1.fus CDKN2A.fus   MDM2.Amp    RB1.Del   ATRX.Amp  PTPRD.Del CDKN2A.Del
 </div>
 <section id="recode-aliases" class="level3">
 <h3 class="anchored" data-anchor-id="recode-aliases">Recode Aliases</h3>
+<p>recode alias argument helps check for any genes that have been renamed.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>binmat_panel_recode <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean, </span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cna =</span> cna_clean, </span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fusion =</span> fusions_clean, </span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">specify_panel =</span> sample_panel_pair, </span>
-<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">recode_aliases =</span> <span class="cn">TRUE</span></span>
-<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>mutations_test <span class="ot">&lt;-</span> mutations_clean <span class="sc">%&gt;%</span></span>
-<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Hugo_Symbol =</span> </span>
-<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>           <span class="fu">case_when</span>(Hugo_Symbol <span class="sc">==</span> <span class="st">"ABL1"</span> <span class="sc">~</span> <span class="st">"ABL"</span>, </span>
-<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>                     <span class="cn">TRUE</span> <span class="sc">~</span> Hugo_Symbol))</span>
-<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>binmat_panel_recode <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
-<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
-<span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_test, </span>
-<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">cna =</span> cna_clean, </span>
-<span id="cb53-19"><a href="#cb53-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">fusion =</span> fusions_clean, </span>
-<span id="cb53-20"><a href="#cb53-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">recode_aliases =</span> <span class="cn">TRUE</span></span>
-<span id="cb53-21"><a href="#cb53-21" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: To ensure gene with multiple names/aliases are correctly grouped together, the
-following genes in your dataframe have been recoded (you can supress this with
-`recode_aliases = FALSE`):
-! ABL recoded to ABL1</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>binmat_panel_recode <span class="ot">&lt;-</span> <span class="fu">create_gene_binary</span>(</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> s1_all, </span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">mutation =</span> mutations_clean, </span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cna =</span> cna_clean, </span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fusion =</span> fusions_clean, </span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">specify_panel =</span> sample_panel_pair, </span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">recode_aliases =</span> <span class="cn">TRUE</span></span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-</section>
-<section id="oncokb-annotation" class="level2">
-<h2 class="anchored" data-anchor-id="oncokb-annotation">OncoKB Annotation</h2>
-<div class="cell">
-
-</div>
 </section>
 </section>
 <section id="analyzing-data" class="level1">
@@ -642,15 +781,15 @@ following genes in your dataframe have been recoded (you can supress this with
 <li>allows you to specify a prevalence threshold cutoff</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_genomic</span>(binmat_panel, <span class="at">freq_cutoff =</span> .<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_genomic</span>(binmat_panel, <span class="at">freq_cutoff =</span> .<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
-<div id="jtktkcjijl" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="yvczotapng" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#jtktkcjijl .gt_table {
+#yvczotapng .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -675,7 +814,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-left-color: #D3D3D3;
 }
 
-#jtktkcjijl .gt_heading {
+#yvczotapng .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -687,7 +826,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-right-color: #D3D3D3;
 }
 
-#jtktkcjijl .gt_title {
+#yvczotapng .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -699,7 +838,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-bottom-width: 0;
 }
 
-#jtktkcjijl .gt_subtitle {
+#yvczotapng .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -711,13 +850,13 @@ following genes in your dataframe have been recoded (you can supress this with
   border-top-width: 0;
 }
 
-#jtktkcjijl .gt_bottom_border {
+#yvczotapng .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#jtktkcjijl .gt_col_headings {
+#yvczotapng .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -732,7 +871,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-right-color: #D3D3D3;
 }
 
-#jtktkcjijl .gt_col_heading {
+#yvczotapng .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -752,7 +891,7 @@ following genes in your dataframe have been recoded (you can supress this with
   overflow-x: hidden;
 }
 
-#jtktkcjijl .gt_column_spanner_outer {
+#yvczotapng .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -764,15 +903,15 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 4px;
 }
 
-#jtktkcjijl .gt_column_spanner_outer:first-child {
+#yvczotapng .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jtktkcjijl .gt_column_spanner_outer:last-child {
+#yvczotapng .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jtktkcjijl .gt_column_spanner {
+#yvczotapng .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -784,7 +923,7 @@ following genes in your dataframe have been recoded (you can supress this with
   width: 100%;
 }
 
-#jtktkcjijl .gt_group_heading {
+#yvczotapng .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -809,7 +948,7 @@ following genes in your dataframe have been recoded (you can supress this with
   vertical-align: middle;
 }
 
-#jtktkcjijl .gt_empty_group_heading {
+#yvczotapng .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -824,15 +963,15 @@ following genes in your dataframe have been recoded (you can supress this with
   vertical-align: middle;
 }
 
-#jtktkcjijl .gt_from_md > :first-child {
+#yvczotapng .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jtktkcjijl .gt_from_md > :last-child {
+#yvczotapng .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jtktkcjijl .gt_row {
+#yvczotapng .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -851,7 +990,7 @@ following genes in your dataframe have been recoded (you can supress this with
   overflow-x: hidden;
 }
 
-#jtktkcjijl .gt_stub {
+#yvczotapng .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -864,7 +1003,7 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 5px;
 }
 
-#jtktkcjijl .gt_stub_row_group {
+#yvczotapng .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -878,11 +1017,11 @@ following genes in your dataframe have been recoded (you can supress this with
   vertical-align: top;
 }
 
-#jtktkcjijl .gt_row_group_first td {
+#yvczotapng .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#jtktkcjijl .gt_summary_row {
+#yvczotapng .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -892,16 +1031,16 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 5px;
 }
 
-#jtktkcjijl .gt_first_summary_row {
+#yvczotapng .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#jtktkcjijl .gt_first_summary_row.thick {
+#yvczotapng .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#jtktkcjijl .gt_last_summary_row {
+#yvczotapng .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -911,7 +1050,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-bottom-color: #D3D3D3;
 }
 
-#jtktkcjijl .gt_grand_summary_row {
+#yvczotapng .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -921,7 +1060,7 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 5px;
 }
 
-#jtktkcjijl .gt_first_grand_summary_row {
+#yvczotapng .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -931,11 +1070,11 @@ following genes in your dataframe have been recoded (you can supress this with
   border-top-color: #D3D3D3;
 }
 
-#jtktkcjijl .gt_striped {
+#yvczotapng .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#jtktkcjijl .gt_table_body {
+#yvczotapng .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -944,7 +1083,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-bottom-color: #D3D3D3;
 }
 
-#jtktkcjijl .gt_footnotes {
+#yvczotapng .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -958,7 +1097,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-right-color: #D3D3D3;
 }
 
-#jtktkcjijl .gt_footnote {
+#yvczotapng .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -967,7 +1106,7 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 5px;
 }
 
-#jtktkcjijl .gt_sourcenotes {
+#yvczotapng .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -981,7 +1120,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-right-color: #D3D3D3;
 }
 
-#jtktkcjijl .gt_sourcenote {
+#yvczotapng .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -989,64 +1128,64 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 5px;
 }
 
-#jtktkcjijl .gt_left {
+#yvczotapng .gt_left {
   text-align: left;
 }
 
-#jtktkcjijl .gt_center {
+#yvczotapng .gt_center {
   text-align: center;
 }
 
-#jtktkcjijl .gt_right {
+#yvczotapng .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jtktkcjijl .gt_font_normal {
+#yvczotapng .gt_font_normal {
   font-weight: normal;
 }
 
-#jtktkcjijl .gt_font_bold {
+#yvczotapng .gt_font_bold {
   font-weight: bold;
 }
 
-#jtktkcjijl .gt_font_italic {
+#yvczotapng .gt_font_italic {
   font-style: italic;
 }
 
-#jtktkcjijl .gt_super {
+#yvczotapng .gt_super {
   font-size: 65%;
 }
 
-#jtktkcjijl .gt_footnote_marks {
+#yvczotapng .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#jtktkcjijl .gt_asterisk {
+#yvczotapng .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#jtktkcjijl .gt_indent_1 {
+#yvczotapng .gt_indent_1 {
   text-indent: 5px;
 }
 
-#jtktkcjijl .gt_indent_2 {
+#yvczotapng .gt_indent_2 {
   text-indent: 10px;
 }
 
-#jtktkcjijl .gt_indent_3 {
+#yvczotapng .gt_indent_3 {
   text-indent: 15px;
 }
 
-#jtktkcjijl .gt_indent_4 {
+#yvczotapng .gt_indent_4 {
   text-indent: 20px;
 }
 
-#jtktkcjijl .gt_indent_5 {
+#yvczotapng .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1159,17 +1298,29 @@ following genes in your dataframe have been recoded (you can supress this with
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_genomic</span>(binmat_panel,</span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">freq_cutoff =</span> .<span class="dv">1</span>, </span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">freq_cutoff_by_gene  =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>binmat_panel_var <span class="ot">&lt;-</span> binmat_panel <span class="sc">%&gt;%</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">sex =</span> <span class="fu">sample</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="st">"M"</span>, <span class="st">"F"</span>),</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">size =</span> <span class="fu">nrow</span>(binmat_panel), <span class="at">replace =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_genomic</span>(binmat_panel_var,</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">freq_cutoff =</span> .<span class="dv">1</span>, </span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> sex,</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">freq_cutoff_by_gene  =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_p</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_q</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>add_q: Adjusting p-values with
+`stats::p.adjust(x$table_body$p.value, method = "fdr")`</code></pre>
+</div>
 <div class="cell-output-display">
 
-<div id="rzppqcvkve" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="ubvcuatjjb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#rzppqcvkve .gt_table {
+#ubvcuatjjb .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1194,7 +1345,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-left-color: #D3D3D3;
 }
 
-#rzppqcvkve .gt_heading {
+#ubvcuatjjb .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1206,7 +1357,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-right-color: #D3D3D3;
 }
 
-#rzppqcvkve .gt_title {
+#ubvcuatjjb .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1218,7 +1369,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-bottom-width: 0;
 }
 
-#rzppqcvkve .gt_subtitle {
+#ubvcuatjjb .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1230,13 +1381,13 @@ following genes in your dataframe have been recoded (you can supress this with
   border-top-width: 0;
 }
 
-#rzppqcvkve .gt_bottom_border {
+#ubvcuatjjb .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#rzppqcvkve .gt_col_headings {
+#ubvcuatjjb .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1251,7 +1402,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-right-color: #D3D3D3;
 }
 
-#rzppqcvkve .gt_col_heading {
+#ubvcuatjjb .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1271,7 +1422,7 @@ following genes in your dataframe have been recoded (you can supress this with
   overflow-x: hidden;
 }
 
-#rzppqcvkve .gt_column_spanner_outer {
+#ubvcuatjjb .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1283,15 +1434,15 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 4px;
 }
 
-#rzppqcvkve .gt_column_spanner_outer:first-child {
+#ubvcuatjjb .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#rzppqcvkve .gt_column_spanner_outer:last-child {
+#ubvcuatjjb .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#rzppqcvkve .gt_column_spanner {
+#ubvcuatjjb .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1303,7 +1454,7 @@ following genes in your dataframe have been recoded (you can supress this with
   width: 100%;
 }
 
-#rzppqcvkve .gt_group_heading {
+#ubvcuatjjb .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1328,7 +1479,7 @@ following genes in your dataframe have been recoded (you can supress this with
   vertical-align: middle;
 }
 
-#rzppqcvkve .gt_empty_group_heading {
+#ubvcuatjjb .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1343,15 +1494,15 @@ following genes in your dataframe have been recoded (you can supress this with
   vertical-align: middle;
 }
 
-#rzppqcvkve .gt_from_md > :first-child {
+#ubvcuatjjb .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#rzppqcvkve .gt_from_md > :last-child {
+#ubvcuatjjb .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#rzppqcvkve .gt_row {
+#ubvcuatjjb .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1370,7 +1521,7 @@ following genes in your dataframe have been recoded (you can supress this with
   overflow-x: hidden;
 }
 
-#rzppqcvkve .gt_stub {
+#ubvcuatjjb .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1383,7 +1534,7 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 5px;
 }
 
-#rzppqcvkve .gt_stub_row_group {
+#ubvcuatjjb .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1397,11 +1548,11 @@ following genes in your dataframe have been recoded (you can supress this with
   vertical-align: top;
 }
 
-#rzppqcvkve .gt_row_group_first td {
+#ubvcuatjjb .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#rzppqcvkve .gt_summary_row {
+#ubvcuatjjb .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1411,16 +1562,16 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 5px;
 }
 
-#rzppqcvkve .gt_first_summary_row {
+#ubvcuatjjb .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#rzppqcvkve .gt_first_summary_row.thick {
+#ubvcuatjjb .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#rzppqcvkve .gt_last_summary_row {
+#ubvcuatjjb .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1430,7 +1581,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-bottom-color: #D3D3D3;
 }
 
-#rzppqcvkve .gt_grand_summary_row {
+#ubvcuatjjb .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1440,7 +1591,7 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 5px;
 }
 
-#rzppqcvkve .gt_first_grand_summary_row {
+#ubvcuatjjb .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1450,11 +1601,11 @@ following genes in your dataframe have been recoded (you can supress this with
   border-top-color: #D3D3D3;
 }
 
-#rzppqcvkve .gt_striped {
+#ubvcuatjjb .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#rzppqcvkve .gt_table_body {
+#ubvcuatjjb .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1463,7 +1614,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-bottom-color: #D3D3D3;
 }
 
-#rzppqcvkve .gt_footnotes {
+#ubvcuatjjb .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1477,7 +1628,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-right-color: #D3D3D3;
 }
 
-#rzppqcvkve .gt_footnote {
+#ubvcuatjjb .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1486,7 +1637,7 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 5px;
 }
 
-#rzppqcvkve .gt_sourcenotes {
+#ubvcuatjjb .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1500,7 +1651,7 @@ following genes in your dataframe have been recoded (you can supress this with
   border-right-color: #D3D3D3;
 }
 
-#rzppqcvkve .gt_sourcenote {
+#ubvcuatjjb .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1508,64 +1659,64 @@ following genes in your dataframe have been recoded (you can supress this with
   padding-right: 5px;
 }
 
-#rzppqcvkve .gt_left {
+#ubvcuatjjb .gt_left {
   text-align: left;
 }
 
-#rzppqcvkve .gt_center {
+#ubvcuatjjb .gt_center {
   text-align: center;
 }
 
-#rzppqcvkve .gt_right {
+#ubvcuatjjb .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#rzppqcvkve .gt_font_normal {
+#ubvcuatjjb .gt_font_normal {
   font-weight: normal;
 }
 
-#rzppqcvkve .gt_font_bold {
+#ubvcuatjjb .gt_font_bold {
   font-weight: bold;
 }
 
-#rzppqcvkve .gt_font_italic {
+#ubvcuatjjb .gt_font_italic {
   font-style: italic;
 }
 
-#rzppqcvkve .gt_super {
+#ubvcuatjjb .gt_super {
   font-size: 65%;
 }
 
-#rzppqcvkve .gt_footnote_marks {
+#ubvcuatjjb .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#rzppqcvkve .gt_asterisk {
+#ubvcuatjjb .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#rzppqcvkve .gt_indent_1 {
+#ubvcuatjjb .gt_indent_1 {
   text-indent: 5px;
 }
 
-#rzppqcvkve .gt_indent_2 {
+#ubvcuatjjb .gt_indent_2 {
   text-indent: 10px;
 }
 
-#rzppqcvkve .gt_indent_3 {
+#ubvcuatjjb .gt_indent_3 {
   text-indent: 15px;
 }
 
-#rzppqcvkve .gt_indent_4 {
+#ubvcuatjjb .gt_indent_4 {
   text-indent: 20px;
 }
 
-#rzppqcvkve .gt_indent_5 {
+#ubvcuatjjb .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1574,77 +1725,211 @@ following genes in your dataframe have been recoded (you can supress this with
   <thead class="gt_col_headings">
     <tr>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col"><strong>Characteristic</strong></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col"><strong>N = 105</strong><sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col"><strong>Overall</strong>, N = 105<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col"><strong>F</strong>, N = 51<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col"><strong>M</strong>, N = 54<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col"><strong>p-value</strong><sup class="gt_footnote_marks">2</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col"><strong>q-value</strong><sup class="gt_footnote_marks">3</sup></th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
     <tr><td class="gt_row gt_left" style="font-weight: bold;">TERT</td>
-<td class="gt_row gt_center">77 (73%)</td></tr>
+<td class="gt_row gt_center">77 (73%)</td>
+<td class="gt_row gt_center">39 (76%)</td>
+<td class="gt_row gt_center">38 (70%)</td>
+<td class="gt_row gt_center">0.5</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">KDM6A</td>
-<td class="gt_row gt_center">50 (48%)</td></tr>
+<td class="gt_row gt_center">50 (48%)</td>
+<td class="gt_row gt_center">26 (51%)</td>
+<td class="gt_row gt_center">24 (44%)</td>
+<td class="gt_row gt_center">0.5</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">FGFR3</td>
-<td class="gt_row gt_center">47 (45%)</td></tr>
+<td class="gt_row gt_center">47 (45%)</td>
+<td class="gt_row gt_center">23 (45%)</td>
+<td class="gt_row gt_center">24 (44%)</td>
+<td class="gt_row gt_center">&gt;0.9</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">ARID1A</td>
-<td class="gt_row gt_center">30 (29%)</td></tr>
+<td class="gt_row gt_center">30 (29%)</td>
+<td class="gt_row gt_center">16 (31%)</td>
+<td class="gt_row gt_center">14 (26%)</td>
+<td class="gt_row gt_center">0.5</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">PIK3CA</td>
-<td class="gt_row gt_center">29 (28%)</td></tr>
+<td class="gt_row gt_center">29 (28%)</td>
+<td class="gt_row gt_center">15 (29%)</td>
+<td class="gt_row gt_center">14 (26%)</td>
+<td class="gt_row gt_center">0.7</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">KMT2D</td>
-<td class="gt_row gt_center">25 (24%)</td></tr>
+<td class="gt_row gt_center">25 (24%)</td>
+<td class="gt_row gt_center">11 (22%)</td>
+<td class="gt_row gt_center">14 (26%)</td>
+<td class="gt_row gt_center">0.6</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">CREBBP</td>
-<td class="gt_row gt_center">22 (21%)</td></tr>
+<td class="gt_row gt_center">22 (21%)</td>
+<td class="gt_row gt_center">8 (16%)</td>
+<td class="gt_row gt_center">14 (26%)</td>
+<td class="gt_row gt_center">0.2</td>
+<td class="gt_row gt_center">0.7</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">STAG2</td>
-<td class="gt_row gt_center">22 (21%)</td></tr>
+<td class="gt_row gt_center">22 (21%)</td>
+<td class="gt_row gt_center">10 (20%)</td>
+<td class="gt_row gt_center">12 (22%)</td>
+<td class="gt_row gt_center">0.7</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">TP53</td>
-<td class="gt_row gt_center">22 (21%)</td></tr>
+<td class="gt_row gt_center">22 (21%)</td>
+<td class="gt_row gt_center">10 (20%)</td>
+<td class="gt_row gt_center">12 (22%)</td>
+<td class="gt_row gt_center">0.7</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">ERBB2</td>
-<td class="gt_row gt_center">19 (18%)</td></tr>
+<td class="gt_row gt_center">19 (18%)</td>
+<td class="gt_row gt_center">10 (20%)</td>
+<td class="gt_row gt_center">9 (17%)</td>
+<td class="gt_row gt_center">0.7</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">ERCC2</td>
-<td class="gt_row gt_center">18 (17%)</td></tr>
+<td class="gt_row gt_center">18 (17%)</td>
+<td class="gt_row gt_center">12 (24%)</td>
+<td class="gt_row gt_center">6 (11%)</td>
+<td class="gt_row gt_center">0.092</td>
+<td class="gt_row gt_center">0.4</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">ARID1B</td>
-<td class="gt_row gt_center">17 (16%)</td></tr>
+<td class="gt_row gt_center">17 (16%)</td>
+<td class="gt_row gt_center">11 (22%)</td>
+<td class="gt_row gt_center">6 (11%)</td>
+<td class="gt_row gt_center">0.15</td>
+<td class="gt_row gt_center">0.5</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">CDKN2A.Del</td>
-<td class="gt_row gt_center">17 (16%)</td></tr>
+<td class="gt_row gt_center">17 (16%)</td>
+<td class="gt_row gt_center">6 (12%)</td>
+<td class="gt_row gt_center">11 (20%)</td>
+<td class="gt_row gt_center">0.2</td>
+<td class="gt_row gt_center">0.7</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">FAT1</td>
-<td class="gt_row gt_center">17 (16%)</td></tr>
+<td class="gt_row gt_center">17 (16%)</td>
+<td class="gt_row gt_center">10 (20%)</td>
+<td class="gt_row gt_center">7 (13%)</td>
+<td class="gt_row gt_center">0.4</td>
+<td class="gt_row gt_center">0.8</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">ATM</td>
-<td class="gt_row gt_center">16 (15%)</td></tr>
+<td class="gt_row gt_center">16 (15%)</td>
+<td class="gt_row gt_center">11 (22%)</td>
+<td class="gt_row gt_center">5 (9.3%)</td>
+<td class="gt_row gt_center">0.079</td>
+<td class="gt_row gt_center">0.4</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">EP300</td>
-<td class="gt_row gt_center">15 (14%)</td></tr>
+<td class="gt_row gt_center">15 (14%)</td>
+<td class="gt_row gt_center">8 (16%)</td>
+<td class="gt_row gt_center">7 (13%)</td>
+<td class="gt_row gt_center">0.7</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">FBXW7</td>
-<td class="gt_row gt_center">15 (14%)</td></tr>
+<td class="gt_row gt_center">15 (14%)</td>
+<td class="gt_row gt_center">11 (22%)</td>
+<td class="gt_row gt_center">4 (7.4%)</td>
+<td class="gt_row gt_center">0.038</td>
+<td class="gt_row gt_center">0.4</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">PBRM1</td>
-<td class="gt_row gt_center">15 (14%)</td></tr>
+<td class="gt_row gt_center">15 (14%)</td>
+<td class="gt_row gt_center">9 (18%)</td>
+<td class="gt_row gt_center">6 (11%)</td>
+<td class="gt_row gt_center">0.3</td>
+<td class="gt_row gt_center">0.8</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">RBM10</td>
-<td class="gt_row gt_center">15 (14%)</td></tr>
+<td class="gt_row gt_center">15 (14%)</td>
+<td class="gt_row gt_center">7 (14%)</td>
+<td class="gt_row gt_center">8 (15%)</td>
+<td class="gt_row gt_center">0.9</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">MGA</td>
-<td class="gt_row gt_center">14 (14%)</td></tr>
+<td class="gt_row gt_center">14 (14%)</td>
+<td class="gt_row gt_center">10 (20%)</td>
+<td class="gt_row gt_center">4 (7.5%)</td>
+<td class="gt_row gt_center">0.065</td>
+<td class="gt_row gt_center">0.4</td></tr>
     <tr><td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">Unknown</td>
-<td class="gt_row gt_center">2</td></tr>
+<td class="gt_row gt_center">2</td>
+<td class="gt_row gt_center">1</td>
+<td class="gt_row gt_center">1</td>
+<td class="gt_row gt_center"></td>
+<td class="gt_row gt_center"></td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">CDKN2B.Del</td>
-<td class="gt_row gt_center">14 (13%)</td></tr>
+<td class="gt_row gt_center">14 (13%)</td>
+<td class="gt_row gt_center">5 (9.8%)</td>
+<td class="gt_row gt_center">9 (17%)</td>
+<td class="gt_row gt_center">0.3</td>
+<td class="gt_row gt_center">0.8</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">BAP1</td>
-<td class="gt_row gt_center">13 (12%)</td></tr>
+<td class="gt_row gt_center">13 (12%)</td>
+<td class="gt_row gt_center">5 (9.8%)</td>
+<td class="gt_row gt_center">8 (15%)</td>
+<td class="gt_row gt_center">0.4</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">CDKN1A</td>
-<td class="gt_row gt_center">12 (11%)</td></tr>
+<td class="gt_row gt_center">12 (11%)</td>
+<td class="gt_row gt_center">6 (12%)</td>
+<td class="gt_row gt_center">6 (11%)</td>
+<td class="gt_row gt_center">&gt;0.9</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">ERBB3</td>
-<td class="gt_row gt_center">12 (11%)</td></tr>
+<td class="gt_row gt_center">12 (11%)</td>
+<td class="gt_row gt_center">6 (12%)</td>
+<td class="gt_row gt_center">6 (11%)</td>
+<td class="gt_row gt_center">&gt;0.9</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">KMT2C</td>
-<td class="gt_row gt_center">12 (11%)</td></tr>
+<td class="gt_row gt_center">12 (11%)</td>
+<td class="gt_row gt_center">6 (12%)</td>
+<td class="gt_row gt_center">6 (11%)</td>
+<td class="gt_row gt_center">&gt;0.9</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">NF1</td>
-<td class="gt_row gt_center">12 (11%)</td></tr>
+<td class="gt_row gt_center">12 (11%)</td>
+<td class="gt_row gt_center">6 (12%)</td>
+<td class="gt_row gt_center">6 (11%)</td>
+<td class="gt_row gt_center">&gt;0.9</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">BRCA2</td>
-<td class="gt_row gt_center">11 (10%)</td></tr>
+<td class="gt_row gt_center">11 (10%)</td>
+<td class="gt_row gt_center">8 (16%)</td>
+<td class="gt_row gt_center">3 (5.6%)</td>
+<td class="gt_row gt_center">0.090</td>
+<td class="gt_row gt_center">0.4</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">SMARCA4</td>
-<td class="gt_row gt_center">11 (10%)</td></tr>
+<td class="gt_row gt_center">11 (10%)</td>
+<td class="gt_row gt_center">5 (9.8%)</td>
+<td class="gt_row gt_center">6 (11%)</td>
+<td class="gt_row gt_center">0.8</td>
+<td class="gt_row gt_center">&gt;0.9</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">SPEN</td>
-<td class="gt_row gt_center">11 (10%)</td></tr>
+<td class="gt_row gt_center">11 (10%)</td>
+<td class="gt_row gt_center">8 (16%)</td>
+<td class="gt_row gt_center">3 (5.6%)</td>
+<td class="gt_row gt_center">0.090</td>
+<td class="gt_row gt_center">0.4</td></tr>
     <tr><td class="gt_row gt_left" style="font-weight: bold;">TSC1</td>
-<td class="gt_row gt_center">11 (10%)</td></tr>
+<td class="gt_row gt_center">11 (10%)</td>
+<td class="gt_row gt_center">10 (20%)</td>
+<td class="gt_row gt_center">1 (1.9%)</td>
+<td class="gt_row gt_center">0.003</td>
+<td class="gt_row gt_center">0.090</td></tr>
   </tbody>
   
   <tfoot class="gt_footnotes">
     <tr>
-      <td class="gt_footnote" colspan="2"><sup class="gt_footnote_marks">1</sup> n (%)</td>
+      <td class="gt_footnote" colspan="6"><sup class="gt_footnote_marks">1</sup> n (%)</td>
+    </tr>
+    <tr>
+      <td class="gt_footnote" colspan="6"><sup class="gt_footnote_marks">2</sup> Pearson's Chi-squared test</td>
+    </tr>
+    <tr>
+      <td class="gt_footnote" colspan="6"><sup class="gt_footnote_marks">3</sup> False discovery rate correction for multiple testing</td>
     </tr>
   </tfoot>
 </table>
@@ -1655,47 +1940,40 @@ following genes in your dataframe have been recoded (you can supress this with
 <section id="visualizing-data" class="level1">
 <h1>Visualizing Data</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggvarclass</span>(mutations_clean) <span class="sc">+</span><span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="impact-example-script_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gggenecor</span>(mutations_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>ℹ `samples` argument is `NULL`. We will infer your cohort inclusion and resulting data frame will include all samples with at least one alteration in mutation, fusion or cna data frames</code></pre>
-</div>
-<div class="cell-output-display">
-<p><img src="impact-example-script_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcomut</span>(mutations_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>ℹ `samples` argument is `NULL`. We will infer your cohort inclusion and resulting data frame will include all samples with at least one alteration in mutation, fusion or cna data frames</code></pre>
-</div>
-<div class="cell-output-display">
-<p><img src="impact-example-script_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtopgenes</span>(mutations_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggvarclass</span>(mutations_clean) <span class="sc">+</span><span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="impact-example-script_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Uses <code>ComplexHeatmap::Heatmap()</code> for descriptive heatmap</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggheatmap</span>(binmat_panel_recode[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, <span class="dv">150</span><span class="sc">:</span><span class="dv">400</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gggenecor</span>(mutations_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ `samples` argument is `NULL`. We will infer your cohort inclusion and resulting data frame will include all samples with at least one alteration in mutation, fusion or cna data frames</code></pre>
+</div>
 <div class="cell-output-display">
 <p><img src="impact-example-script_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcomut</span>(mutations_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ `samples` argument is `NULL`. We will infer your cohort inclusion and resulting data frame will include all samples with at least one alteration in mutation, fusion or cna data frames</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="impact-example-script_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggtopgenes</span>(mutations_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="impact-example-script_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <section id="get-tmb" class="level2">
 <h2 class="anchored" data-anchor-id="get-tmb">Get TMB</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>clin <span class="ot">&lt;-</span> <span class="fu">available_clinical_attributes</span>(<span class="st">"blca_nmibc_2017"</span>)</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>clin<span class="sc">$</span>clinicalAttributeId <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>clin <span class="ot">&lt;-</span> <span class="fu">available_clinical_attributes</span>(<span class="st">"blca_nmibc_2017"</span>)</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>clin<span class="sc">$</span>clinicalAttributeId <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "AGE"                     "CANCER_TYPE"            
  [3] "CANCER_TYPE_DETAILED"    "CONCOMITANT_CIS"        
@@ -1706,6 +1984,24 @@ following genes in your dataframe have been recoded (you can supress this with
 [13] "SPECIMEN_TYPE"           "STAGE"                  
 [15] "TMB_NONSYNONYMOUS"       "TREATMENT"              
 [17] "TUMOR_SIZE"             </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_clinical_by_study</span>(<span class="at">study_id =</span> <span class="st">"blca_nmibc_2017"</span>, <span class="st">"TMB_NONSYNONYMOUS"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 105 × 8
+   uniqueSampleKey         uniqu…¹ sampl…² patie…³ studyId clini…⁴ value dataL…⁵
+   &lt;chr&gt;                   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;  
+ 1 UC0wMDAxNDUzLVQwMS1JTT… UC0wMD… P-0001… P-0001… blca_n… TMB_NO… 11.0… SAMPLE 
+ 2 UC0wMDAyMTY2LVQwMS1JTT… UC0wMD… P-0002… P-0002… blca_n… TMB_NO… 8.87… SAMPLE 
+ 3 UC0wMDAzMjM4LVQwMS1JTT… UC0wMD… P-0003… P-0003… blca_n… TMB_NO… 13.7… SAMPLE 
+ 4 UC0wMDAzMjU3LVQwMS1JTT… UC0wMD… P-0003… P-0003… blca_n… TMB_NO… 18.5… SAMPLE 
+ 5 UC0wMDAzMjYxLVQwMS1JTT… UC0wMD… P-0003… P-0003… blca_n… TMB_NO… 42.0… SAMPLE 
+ 6 UC0wMDAzMzUyLVQwMS1JTT… UC0wMD… P-0003… P-0003… blca_n… TMB_NO… 4.89… SAMPLE 
+ 7 UC0wMDAzMzYyLVQwMS1JTT… UC0wMD… P-0003… P-0003… blca_n… TMB_NO… 25.4… SAMPLE 
+ 8 UC0wMDAzMzcwLVQwMS1JTT… UC0wMD… P-0003… P-0003… blca_n… TMB_NO… 6.85… SAMPLE 
+ 9 UC0wMDAzMzg4LVQwMS1JTT… UC0wMD… P-0003… P-0003… blca_n… TMB_NO… 9.78… SAMPLE 
+10 UC0wMDAzMzkxLVQwMS1JTT… UC0wMD… P-0003… P-0003… blca_n… TMB_NO… 8.80… SAMPLE 
+# … with 95 more rows, and abbreviated variable names ¹​uniquePatientKey,
+#   ²​sampleId, ³​patientId, ⁴​clinicalAttributeId, ⁵​dataLevel</code></pre>
 </div>
 </div>
 </section>

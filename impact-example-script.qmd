@@ -2,6 +2,7 @@
 title: "IMPACT Example Script"
 format: html
 editor: source
+toc: true
 ---
 
 # Pulling Data 
@@ -23,7 +24,7 @@ test_cbioportal_db()
 
 ```{r}
 all_studies <- available_studies()
-all_studies
+all_studies %>% head()
 ```
 
 We will use the following two studies for examples
@@ -117,11 +118,19 @@ fusions <- all_genomic$structural_variant
 
 ```
 
+Explore maf format (one row per mutation)
+
+```{r}
+mutations %>% str()
+```
+
 ## Check Mutation Status
 
 Sometimes you may want to code 'Unknown' as 'Somatic' (recall that somatic mutations can occur in any of the cells of the body except the germ cells and therefore are not passed on. These are often tumor-specific acquired mutations). 
 
 Researchers can compare tumor mutations to a matched normal sample. Tumor-normal comparisons are crucial for identifying the somatic variants that act as driver mutations in cancer progression
+
+Filter out germline (unless working on germline study)
 
 ```{r}
 table(mutations$mutationStatus, useNA = "always")
@@ -173,8 +182,11 @@ binmat1 <- create_gene_binary(
   samples = s1_all, 
   mutation = mutations_clean
 )
+
+unique(mutations_clean$Tumor_Sample_Barcode) %>% length()
 ```
 
+Samples arg should be specified! 
 
 ```{r }
 binmat2 <- create_gene_binary(
@@ -211,6 +223,14 @@ binmat <- create_gene_binary(
   mutation = mutations_clean, 
   cna = cna_clean, 
   fusion = fusions_clean
+)
+
+binmatx <- create_gene_binary(
+  samples = s1_all, 
+  mutation = mutations_clean, 
+  cna = cna_clean, 
+  fusion = fusions_clean,
+  specify_panel = "impact"
 )
 
 head(binmat[1:6, 1:6])
@@ -280,26 +300,6 @@ binmat_panel_recode <- create_gene_binary(
 )
 ```
 
-Luckily this isn't a problem in our data, but let's make up an example to demonstrate.
-
-```{r }
-
-# recode ABL1 gene to one of it's aliases
-mutations_test <- mutations_clean %>%
-  mutate(Hugo_Symbol = 
-           case_when(Hugo_Symbol == "ABL1" ~ "ABL", 
-                     TRUE ~ Hugo_Symbol))
-
-binmat_panel_recode <- create_gene_binary(
-  samples = s1_all, 
-  mutation = mutations_test, 
-  cna = cna_clean, 
-  fusion = fusions_clean, 
-  recode_aliases = TRUE
-)
-```
-
-
 
 # Analyzing Data
 
@@ -331,7 +331,8 @@ tbl_genomic(binmat_panel_var,
 # Visualizing Data
 
 ```{r}
-ggvarclass(mutations_clean) +theme_bw()
+ggvarclass(mutations_clean) +
+  theme_bw()
 ```
 
 ```{r}
@@ -346,11 +347,7 @@ ggcomut(mutations_clean)
 ```{r}
 ggtopgenes(mutations_clean)
 ```
-Uses `ComplexHeatmap::Heatmap()` for descriptive heatmap
 
-```{r}
-ggheatmap(binmat_panel_recode[1:100, 150:400])
-```
 
 ## Get TMB
 
@@ -359,7 +356,7 @@ ggheatmap(binmat_panel_recode[1:100, 150:400])
 clin <- available_clinical_attributes("blca_nmibc_2017")
 clin$clinicalAttributeId %>% unique()
 
-get_clinical_by_study(study_id = "blca_nmibs_2017", "TMB_NONSYNONYMOUS")
+tmb <- get_clinical_by_study(study_id = "blca_nmibc_2017", "TMB_NONSYNONYMOUS")
 ```
 
 

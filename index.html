@@ -431,10 +431,10 @@
 </div>
 </div>
 </section>
-<section id="get-the-data-cbioportal-1" class="slide level2">
-<h2>Get the Data: cBioPortal</h2>
+<section id="get-the-data-cbioportalr" class="slide level2">
+<h2>Get the Data: cBioPortalR</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
+<div class="column" style="width:70%;">
 <p><span class="emphasized">{cbioportalR}</span> allows you to access cBioPortal’s genomic and clinical data sets directly through R</p>
 <p>Install the most up to date version:</p>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"karissawhiting/cbioportalR"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -501,7 +501,7 @@
 <ul>
 <li>Germline tumor samples</li>
 <li>Samples from other institutions</li>
-<li>Data hand curated/annotated for certains variants (e.g.&nbsp;synonymous snps only)</li>
+<li>Data hand curated/annotated for certains variants (e.g.&nbsp;certain SNPs only)</li>
 </ul></li>
 <li><p>Be sure to check for <span class="emphasized">selection of genes</span> or filters that may have been applied</p></li>
 <li><p>You may have to do some additional data wrangling to get this data to work in MSK pipelines</p></li>
@@ -525,7 +525,7 @@
 </ul></li>
 <li><strong>Data Formats &amp; Gene Standards Often Inconsistent</strong>
 <ul>
-<li>Column names, data formats and gene names may differ between studies.</li>
+<li>Column names, data formats and gene names may differ between studies or even within studies!</li>
 </ul></li>
 <li><strong>Missing Data in Mutation Status</strong>
 <ul>
@@ -542,7 +542,7 @@
 <ol type="1">
 <li><strong>Research Samples vs.&nbsp;IMPACT Samples</strong>
 <ul>
-<li>Some samples may be sequenced outside MSK or using different panels. You can usually tell by the sample ID (if P-000XXX-T0X-IMX, it is likely IMPACT with IMX indicating panel)</li>
+<li>Some samples may be sequenced outside MSK or using different panels.</li>
 <li><span class="emphasized">Check panels and annotate NAs accordingly</span></li>
 </ul></li>
 <li><strong>Cohort Inclusion</strong>
@@ -552,7 +552,7 @@
 </ul></li>
 <li><strong>Data Formats &amp; Gene Standards Often Inconsistent</strong>
 <ul>
-<li>Column names, data formats and gene names may differ between studies.</li>
+<li>Column names, data formats and gene names may differ between studies or even within studies!</li>
 <li><span class="emphasized">Reformat data as necessary and check gene aliases (<code>recode_aliases = TRUE</code>)</span></li>
 </ul></li>
 <li><strong>Missing Data in Mutation Status</strong>
@@ -584,7 +584,7 @@
 <li>Although TMB is always measured as number of mutations per coding area, depth of sequencing can make this measure inconsistent between studies.</li>
 <li>Usually ok within IMPACT studies but not always comparable with WES studies</li>
 </ul></li>
-<li><hr></li>
+<li><strong>Survival Analysis Biases</strong></li>
 </ol>
 </section>
 <section id="analyzing-data-multiple-testing" class="slide level2">
@@ -592,7 +592,7 @@
 <ul>
 <li><p>Because each hypothesis test has a probability of producing a type I error (falsely rejecting a null hypothesis that is true), performing a large number of hypothesis tests virtually guarantees the presence of type I errors among the findings.</p></li>
 <li><p>Firstly, depending on size of data and type of analysis, choose a prevalence threshold for genes to test</p></li>
-<li><p>Report tests with adjustment- Recommended to use false discovery rate adjustment as opposed to FWER (eg. bonferroni) as it controls for a low proportion of false positives, instead of guarding against making any false positive conclusion at all</p></li>
+<li><p><span class="emphasized">Report tests with adjustment</span>- Recommended to use false discovery rate adjustment as opposed to FWER (eg. bonferroni) as it controls for a low proportion of false positives, instead of guarding against making any false positive conclusion at all</p></li>
 <li><p>Reference: Goeman JJ, Solari A. Multiple hypothesis testing in genomics. Stat Med. 2014 May 20;33(11):1946-78. doi: 10.1002/sim.6082. Epub 2014 Jan 8. PMID: 24399688.</p></li>
 </ul>
 </section>
@@ -602,16 +602,30 @@
 <li>Tumor mutation burden (TMB): total number of mutations per coding area of a tumor genome.</li>
 <li>Coding area (denominator) different for different versions of MSK-IMPACT</li>
 </ul>
-<p><img data-src="images/tmb.png"> - Get this data from cBioPortal when you can (they have published methods on this).</p>
+
+<img data-src="images/tmb.png" class="r-stretch"><ul>
+<li>Get this data from cBioPortal when you can (they have published methods on this).</li>
+</ul>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">available_clinical_attributes</span>(<span class="sc">&lt;</span>your<span class="sc">-</span>study<span class="sc">&gt;</span>)</span>
 <span id="cb6-2"><a href="#cb6-2"></a><span class="fu">get_clinical_by_study</span>(<span class="at">clinical_attribute =</span> <span class="sc">&lt;</span>tmb<span class="sc">-</span>attribute<span class="sc">-</span>name<span class="sc">&gt;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>If it’s not available, you can calculate it yourself</li>
 </ul>
+</section>
+<section id="analyzing-data-survival-analysis-biases" class="slide level2">
+<h2>Analyzing Data: Survival Analysis Biases</h2>
+<ul>
+<li>Often in older studies, patients who were sampled were worse off- check this if you can</li>
+<li>Also, sampling bias may be present:</li>
+</ul>
+<p><span class="larger">Brown S, Lavery JA, Shen R, et al.&nbsp;Implications of Selection Bias Due to Delayed Study Entry in Clinical Genomic Studies. JAMA Oncol. 2022;8(2):287–291. doi:10.1001/jamaoncol.2021.5153</span></p>
+</section></section>
+<section id="thank-you" class="title-slide slide level1 center" data-background-color="#007CBA" style="text-align: center;">
+<h1>Thank You!</h1>
 <div class="footer footer-default">
 
 </div>
-</section></section>
+</section>
     </div>
   </div>
 
